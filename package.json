@@ -1,0 +1,17 @@
+{
+  "name": "awscloudwatch",
+  "version": "1.0.0",
+  "description": "",
+  "main": "CloudWatchSample.js",
+  "scripts": {
+    "test": "mocha **/*.test.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "assert": "^1.4.1",
+    "aws-sdk": "^2.285.1",
+    "mocha": "^5.2.0",
+    "rewire": "^4.0.1"
+  }
+}

@@ -1,34 +1,56 @@
 const AWS = require('aws-sdk');
 
+const logger = require('./logger');
+// Send this metric to N.Virginia region
 AWS.config.update({region: 'us-east-1'});
 
-let cloudwatch;
-
-if (!cloudwatch) {
-    cloudwatch = new AWS.CloudWatch();
-}
+let cloudWatch;
 
 let params = {
-    MetricData: [ /* required */
+    MetricData: [
         {
             MetricName: 'PrimeVisionFilterCount',
-            Timestamp: new Date || 'Wed Dec 31 1969 16:00:00 GMT-0800 (PST)' || 123456789,
-            Unit: "None",
-            Value: 10.0
-        },
-        /* more items */
+            Timestamp: new Date,
+            Value: 10
+        }
     ],
     Namespace: 'uis-prime-vision-filter'
 };
 
-function putMetricData()    {
-    console.log('invoke real object!');
-    return cloudwatch.putMetricData(params, function(err, data) {
-        if (err) console.log(err, err.stack);
-        else console.log(data);
-    });
+function putMetricData(count)    {
+    if (typeof count === 'undefined' || !Number.isInteger(count) || count < 0) {
+        console.log(`Parameter count is invalid: ${count}`);
+    }
+
+    if (!cloudWatch) {
+        cloudWatch = new AWS.CloudWatch();
+    }
+
+    logger.traceLog('invoke real object!');
+    return new Promise((resolve, reject) => {
+        params.MetricData[0].Value = count;
+        params.MetricData[0].Timestamp = new Date();
+    
+        logger.traceLog(`Metric data: ${JSON.stringify(params.MetricData[0])}`);
+    
+        logger.traceLog('Put metrics to CloudWatch');
+        cloudWatch.putMetricData(params, (err, data) => {
+          if (err) {
+            logger.traceLog('Error: sending metrics to cloudWatch.');
+            logger.traceLog(err, err.stack);
+            reject(err.stack);
+          } else {
+            logger.traceLog('Sending metrics to cloudWatch successfully');
+            logger.traceLog(data);
+            resolve(data);
+          }
+        });
+      });
+
+
+    
 };
 
-putMetricData(); 
+// putMetricData(12); 
 
 exports.putMetricData = putMetricData;

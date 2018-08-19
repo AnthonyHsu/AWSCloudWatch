@@ -1,5 +1,4 @@
 exports.getCloudWatch = function() {
-
     console.log('invoke mock!');
     const mockCloudWatch = {};
     mockCloudWatch.putMetricData = function(params = {}, callback)  {
